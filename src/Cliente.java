@@ -9,13 +9,10 @@ public class Cliente extends Thread
 	public Cliente(int pNum, Buffer pBuf)
 	{
 		mensajes = new ArrayList<Mensaje>();	
-		for(int i = 0; i < pNum; i++)
-		{
-			mensajes.add(new Mensaje(Integer.parseInt(""+(Math.random()*pNum))));
-		}
+		
 		
 		buf = pBuf;
-		if(mensajes.size()==0)
+		if(pNum==0)
 		{
 			termino = true;
 		}
@@ -23,24 +20,52 @@ public class Cliente extends Thread
 		{
 			termino = false;
 		}
+		
+		for(int i = 0; i < pNum; i++)
+		{
+			mensajes.add(new Mensaje(i,this));
+		}
 
 	}
 	
 	public void run()
 	{
+		System.out.println("hola");
 		while(!termino)
-		{			
-			enviarMensaje();
+		{	
+			System.out.println(mensajes.get(mensajes.size()-1).getContenido());
+			enviarMensaje();			
 		}
 	}
 	
-	public synchronized void enviarMensaje()
+	public void enviarMensaje()
 	{
-		buf.recibirMensaje(mensajes.remove(mensajes.size()-1));
-		if(mensajes.size() <=0)
+		Mensaje aEnviar = mensajes.remove(mensajes.size()-1);
+		buf.recibirMensaje(aEnviar);
+		synchronized(aEnviar)
 		{
-			termino = true;
+			try
+			{
+				aEnviar.wait();
+			}
+			catch(InterruptedException e)
+			{
+				System.out.println(e.getMessage());
+			}
 		}
+		
+		
+//		buf.darRespuesta();
+		
+//		if(mensajes.size() <=0)
+//		{
+//			termino = true;
+//		}
+	}
+	
+	public void recibirRespuesta(Mensaje pMensaje)
+	{
+		mensajes.add(pMensaje);
 	}
 }
 

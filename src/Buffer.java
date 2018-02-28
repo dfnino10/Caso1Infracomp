@@ -30,6 +30,11 @@ public class Buffer
 		return mensajes.size();
 	}
 	
+	public Mensaje delegarMensaje()
+	{
+		return mensajes.remove(mensajes.size()-1);
+	}
+	
 	public static void main(String[] args) 
 	{
 		Buffer buf = new Buffer(1,1,1);
@@ -42,15 +47,18 @@ public class Buffer
 		
 		for(int i = 0; i < servidores; i++)
 		{
-			Servidor s = new Servidor();
+			Servidor s = new Servidor(buf);
 			s.start();
 		}
 	}
 
-
 	public void recibirMensaje(Mensaje msg) 
 	{
 		mensajes.add(msg);
-	}
+	}	
 	
+	public void recibirRespuesta(Mensaje pMensaje)
+	{
+		pMensaje.getEmisor().recibirRespuesta(pMensaje);
+	}
 }
