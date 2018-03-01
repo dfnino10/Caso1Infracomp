@@ -37,19 +37,25 @@ public class Buffer
 	
 	public static void main(String[] args) 
 	{
-		Buffer buf = new Buffer(1,1,1);
+		System.out.println("Empieza jornada");
+		
+		Buffer buf = new Buffer(5,10,3);
 		
 		for(int i = 0; i < clientes; i++)
 		{
-			Cliente c = new Cliente(2, buf);
+			Cliente c = new Cliente(3, buf);
 			c.start();
 		}
+		
+		clientes = 0;
 		
 		for(int i = 0; i < servidores; i++)
 		{
 			Servidor s = new Servidor(buf);
 			s.start();
 		}
+		
+		servidores = 0;
 	}
 
 	public void recibirMensaje(Mensaje msg) 
@@ -60,5 +66,25 @@ public class Buffer
 	public void recibirRespuesta(Mensaje pMensaje)
 	{
 		pMensaje.getEmisor().recibirRespuesta(pMensaje);
+	}
+
+
+	public int getCapacidad() {
+		return capacidad;
+	}
+
+
+	public void setCapacidad(int capacidad) {
+		this.capacidad = capacidad;
+	}
+	
+	public void entrarCliente()
+	{
+		clientes ++;
+	}
+	
+	public void salirCliente()
+	{
+		clientes --;
 	}
 }
