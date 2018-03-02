@@ -1,3 +1,5 @@
+//David Felipe Niño		201412734
+//Nicolás Mateo Hernández Rojas		201412420
 
 public class Mensaje 
 {
@@ -12,19 +14,23 @@ public class Mensaje
 		emisor = pEmisor;
 	}
 	
-	public int getContenido() {
+	public int getContenido()
+	{
 		return contenido;
 	}
 
-	public void setContenido(int contenido) {
+	public void setContenido(int contenido) 
+	{
 		this.contenido = contenido;
 	}
 
-	public Cliente getEmisor() {
+	public Cliente getEmisor()
+	{
 		return emisor;
 	}
 
-	public void setEmisor(Cliente emisor) {
+	public void setEmisor(Cliente emisor) 
+	{
 		this.emisor = emisor;
 	}
 	

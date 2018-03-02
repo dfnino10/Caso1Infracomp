@@ -1,3 +1,6 @@
+//David Felipe Niño		201412734
+//Nicolás Mateo Hernández Rojas		201412420
+
 import java.util.ArrayList;
 
 public class Cliente extends Thread
@@ -5,12 +8,12 @@ public class Cliente extends Thread
 	private ArrayList<Mensaje> mensajes;
 	private boolean termino;
 	private Buffer buf;
+	private int idCliente;
 	
-	public Cliente(int pNum, Buffer pBuf)
+	public Cliente(int pId, int pNum, Buffer pBuf)
 	{
-		mensajes = new ArrayList<Mensaje>();	
-		
-		
+		mensajes = new ArrayList<Mensaje>();		
+		idCliente = pId+1;
 		buf = pBuf;
 		if(pNum==0)
 		{
@@ -31,10 +34,13 @@ public class Cliente extends Thread
 	{
 		while(!termino)
 		{	
-			while(buf.getClientes() == buf.getCapacidad())
+			while(buf.getClientesActuales() == buf.getCapacidad())
 			{			
 				yield();			
 			}	
+			
+			buf.entrarCliente();
+			
 			if(mensajes.size() > 0)
 			{
 				enviarMensaje();	
@@ -43,47 +49,74 @@ public class Cliente extends Thread
 			{
 				termino = true;
 			}
+			
+			buf.salirCliente();
 		}
-		System.out.println("Yo, " + this + " termino");
+		System.out.println("Yo, C" + getIdCliente() + " termino");
 	}
 	
 	public void enviarMensaje()
-	{
-		buf.entrarCliente();
+	{		
 		Mensaje aEnviar = mensajes.remove(mensajes.size()-1);
 		buf.recibirMensaje(aEnviar);
 		synchronized(buf)
 		{
-			buf.notifyAll();
+			buf.notify();
 		}
 		synchronized(aEnviar)
 		{		
 			
 			try
 			{
-				System.out.println("Yo, " + this + " envío " + aEnviar.getContenido());
+				System.out.println("Yo, C" + getIdCliente() + " envío " + aEnviar.getContenido());
 				aEnviar.wait();
-				System.out.println("Yo, " + this + " recibo " + aEnviar.getContenido());
+				System.out.println("Yo, C" + getIdCliente() + " recibo " + aEnviar.getContenido());
 			}
 			catch(InterruptedException e)
 			{
 				System.out.println(e.getMessage());
 			}
-		}
-		
-		
-//		buf.darRespuesta();
-		
-//		if(mensajes.size() <=0)
-//		{
-//			termino = true;
-//		}
-		buf.salirCliente();
+		}		
 	}
 	
-	public void recibirRespuesta(Mensaje pMensaje)
+	public ArrayList<Mensaje> getMensajes()
 	{
-		mensajes.add(pMensaje);
+		return mensajes;
 	}
+
+	public void setMensajes(ArrayList<Mensaje> mensajes) 
+	{
+		this.mensajes = mensajes;
+	}
+
+	public boolean isTermino() 
+	{
+		return termino;
+	}
+
+	public void setTermino(boolean termino) 
+	{
+		this.termino = termino;
+	}
+
+	public Buffer getBuf() 
+	{
+		return buf;
+	}
+
+	public void setBuf(Buffer buf) 
+	{
+		this.buf = buf;
+	}
+
+	public int getIdCliente() 
+	{
+		return idCliente;
+	}
+
+	public void setIdCliente(int id) 
+	{
+		this.idCliente = id;
+	}	
 }
 

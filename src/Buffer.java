@@ -1,28 +1,30 @@
+//David Felipe Niño		201412734
+//Nicolás Mateo Hernández Rojas		201412420
+
 import java.util.ArrayList;
 
 public class Buffer 
 {
 	private int capacidad;
-	private static int clientes;
-	private static int servidores;	
-	private ArrayList<Mensaje> mensajes;
+	private int clientesActuales;
+	private ArrayList<Mensaje> mensajes;	
 	
-	public Buffer(int pCapacidad, int pClientes, int pServidores)
+	public Buffer(int pCapacidad)
 	{
 		capacidad = pCapacidad;
-		clientes = pClientes;
-		servidores = pServidores;
+		clientesActuales = 0;
 		mensajes = new ArrayList<Mensaje>();
 	}
 	
 	
-	public static int getClientes() {
-		return clientes;
+	public int getClientesActuales() 
+	{
+		return clientesActuales;
 	}
 
-	public static void setClientes(int clientes) 
+	public void setClientesActuales(int clientesActuales) 
 	{
-		Buffer.clientes = clientes;
+		this.clientesActuales = clientesActuales;
 	}
 	
 	public int getNumMensajes()
@@ -30,61 +32,34 @@ public class Buffer
 		return mensajes.size();
 	}
 	
-	public Mensaje delegarMensaje()
+	public synchronized Mensaje delegarMensaje()
 	{
 		return mensajes.remove(mensajes.size()-1);
 	}
-	
-	public static void main(String[] args) 
-	{
-		System.out.println("Empieza jornada");
-		
-		Buffer buf = new Buffer(5,10,3);
-		
-		for(int i = 0; i < clientes; i++)
-		{
-			Cliente c = new Cliente(3, buf);
-			c.start();
-		}
-		
-		clientes = 0;
-		
-		for(int i = 0; i < servidores; i++)
-		{
-			Servidor s = new Servidor(buf);
-			s.start();
-		}
-		
-		servidores = 0;
-	}
 
-	public void recibirMensaje(Mensaje msg) 
+	public synchronized void recibirMensaje(Mensaje msg) 
 	{
 		mensajes.add(msg);
 	}	
 	
-	public void recibirRespuesta(Mensaje pMensaje)
+	public int getCapacidad()
 	{
-		pMensaje.getEmisor().recibirRespuesta(pMensaje);
-	}
-
-
-	public int getCapacidad() {
 		return capacidad;
 	}
 
-
-	public void setCapacidad(int capacidad) {
+	public void setCapacidad(int capacidad) 
+	{
 		this.capacidad = capacidad;
 	}
 	
-	public void entrarCliente()
+	public synchronized void entrarCliente()
 	{
-		clientes ++;
+		clientesActuales ++;
 	}
 	
-	public void salirCliente()
+	public synchronized void salirCliente()
 	{
-		clientes --;
+		clientesActuales --;
 	}
+
 }
